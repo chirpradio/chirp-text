@@ -1,0 +1,42 @@
+---
+layout: base.njk
+pagination:
+  data: cms.djs
+  size: 1
+  alias: dj
+permalink: "/djs/{{ dj.slug or (dj.djName | slugify) }}/"
+eleventyComputed:
+  title: "{{ dj.djName }} — CHIRP Radio"
+  description: "{{ dj.djExcerpt or (dj.djName + ' on CHIRP Radio.') }}"
+---
+
+<nav aria-label="Breadcrumb">
+  <a href="/djs/">← All DJs</a>
+</nav>
+
+<article class="dj-profile">
+  <h1>{{ dj.djName }}</h1>
+  {% if dj.showName %}<p class="dj-meta">{{ dj.showName }}</p>{% endif %}
+
+  {% if dj.showSchedules and dj.showSchedules.length %}
+  <h2>Show schedule</h2>
+  <ul>
+    {% for slot in dj.showSchedules %}
+    <li>{{ slot.dayOfWeek | capitalize }} {{ slot.startTime | to12Hour }}–{{ slot.endTime | to12Hour }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if dj.djExcerpt %}
+  <p class="dj-meta"><em>{{ dj.djExcerpt }}</em></p>
+  {% endif %}
+
+  {% if dj.djBio %}
+  <h2>About {{ dj.djName }}</h2>
+  <div class="article-body">{{ dj.djBio | safe }}</div>
+  {% endif %}
+
+  {% if dj.djDonationLink %}
+  <p><a href="{{ dj.djDonationLink }}">Support {{ dj.djName }} ↗</a></p>
+  {% endif %}
+</article>

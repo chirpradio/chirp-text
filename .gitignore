@@ -1,0 +1,6 @@
+node_modules/
+_site/
+.cache/
+.eleventy-fetch-cache/
+.DS_Store
+*.log

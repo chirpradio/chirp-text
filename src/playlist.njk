@@ -1,0 +1,57 @@
+---
+layout: base.njk
+title: Playlist — CHIRP Radio
+description: What CHIRP Radio has been playing, hour-by-hour.
+permalink: /playlist/
+autoRefresh: true
+---
+
+<h1>Playlist</h1>
+<p>Every track CHIRP has played, grouped by hour in Chicago time. Newest first.</p>
+
+<p class="refresh-note" role="note">
+  <span aria-hidden="true">⟳ </span>
+  Updated at <time datetime="{{ cms.buildTime }}">{{ cms.buildTime | chicagoTime }}</time>
+  — page refreshes every minute.
+</p>
+
+{% set hours = cms.allTracks | groupByHour %}
+
+{% if hours.length === 0 %}
+<p>No recent plays available right now.</p>
+{% endif %}
+
+{% for hour in hours %}
+<section class="hour-block" aria-labelledby="hour-{{ hour.hourKey }}">
+  <h3 class="hour-header" id="hour-{{ hour.hourKey }}">
+    <span>
+      <a class="dj-link" href="/djs/{{ hour.djName | slugify }}/">{{ hour.djName }}</a>
+    </span>
+    <span class="time-label">{{ hour.label }}</span>
+  </h3>
+  <table class="playlist" aria-label="Tracks played during {{ hour.label }}">
+    <thead>
+      <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Track</th>
+        <th scope="col">Artist</th>
+        <th scope="col">Album</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for track in hour.tracks %}
+      <tr>
+        <td>{{ track.playedAt | chicagoTime }}</td>
+        <td>
+          {{ track.trackName }}
+          {% if track.isLocal %}<span class="local" aria-label="Local artist">LOCAL</span>{% endif %}
+          {% if track.notes %}<div class="meta" style="font-size: 0.8125rem; margin-top: 2px;">{{ track.notes }}</div>{% endif %}
+        </td>
+        <td>{{ track.artistName }}</td>
+        <td>{{ track.albumName or '' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endfor %}

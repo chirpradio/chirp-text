@@ -1,0 +1,95 @@
+---
+layout: base.njk
+title: CHIRP Radio 107.1 FM — Chicago Independent Radio
+permalink: /
+autoRefresh: true
+---
+
+<h1>Listen Live</h1>
+
+{% if cms.nowPlaying %}
+<div class="now-playing" aria-live="polite">
+  <span class="meta">Now playing</span>
+  <strong>{{ cms.nowPlaying.trackName }} — {{ cms.nowPlaying.artistName }}</strong>
+  <div class="meta">
+    {% if cms.nowPlaying.albumName %}from <em>{{ cms.nowPlaying.albumName }}</em> · {% endif %}
+    DJ {{ cms.nowPlaying.djName }} · {{ cms.nowPlaying.playedAt | chicagoTime }}
+  </div>
+</div>
+{% endif %}
+
+<p class="refresh-note" role="note">
+  <span aria-hidden="true">⟳ </span>
+  Updated at <time datetime="{{ cms.buildTime }}">{{ cms.buildTime | chicagoTime }}</time>
+  — page refreshes every minute.
+</p>
+
+<div class="listen-actions">
+  <a class="btn-red" href="https://peridot.streamguys1.com:5185/live">▶ Play in browser (128 kbps)</a>
+  <a href="https://peridot.streamguys1.com:5180/live-64kb">Play 64 kbps</a>
+  <a href="https://apps.apple.com/us/app/chirp-radio/id373395037">iOS app</a>
+  <a href="https://play.google.com/store/apps/details?id=org.chirp_radio.mobile">Android app</a>
+</div>
+
+<p><strong>Or paste this URL into VLC, Sonos, your car stereo, or any audio player:</strong></p>
+<p class="stream-url">https://peridot.streamguys1.com:5185/live</p>
+
+<h2>Recently Played</h2>
+<table class="playlist" aria-label="Recently played tracks">
+  <thead>
+    <tr>
+      <th scope="col">Time</th>
+      <th scope="col">Track</th>
+      <th scope="col">Artist</th>
+      <th scope="col">DJ</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for track in cms.recentlyPlayed %}
+    <tr>
+      <td>{{ track.playedAt | chicagoTime }}</td>
+      <td>
+        {{ track.trackName }}
+        {% if track.isLocal %}<span class="local">LOCAL</span>{% endif %}
+      </td>
+      <td>{{ track.artistName }}</td>
+      <td>{{ track.djName }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>DJs</h2>
+<ul class="dj-list">
+{% for dj in cms.djs %}
+  <li>{{ dj.djName }}{% if dj.showName %} — <em>{{ dj.showName }}</em>{% endif %}</li>
+{% endfor %}
+</ul>
+
+<h2>Recent Posts</h2>
+<ul class="articles-list">
+{% for article in cms.articles %}{% if loop.index <= 5 %}
+  <li>
+    <h3><a href="/blog/{{ article.slug }}/">{{ article.title }}</a></h3>
+    <div class="meta">
+      {{ article.publishedDate | chicagoDate }}
+      {% if article.author and article.author.name %} · by {{ article.author.name }}{% endif %}
+    </div>
+    {% if article.excerpt %}<div class="excerpt">{{ article.excerpt }}</div>{% endif %}
+  </li>
+{% endif %}{% endfor %}
+</ul>
+
+<h2>Upcoming Events</h2>
+{% if cms.events.length %}
+<ul class="articles-list">
+{% for event in cms.events %}{% if loop.index <= 5 %}
+  <li>
+    <h3><a href="/events/{{ event.slug }}/">{{ event.title }}</a></h3>
+    <div class="meta">{{ event.date | chicagoDate }}{% if event.venue and event.venue.name %} · {{ event.venue.name }}{% endif %}</div>
+  </li>
+{% endif %}{% endfor %}
+</ul>
+{% else %}
+<p>No upcoming events right now — check back soon.</p>
+{% endif %}

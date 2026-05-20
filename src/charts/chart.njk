@@ -1,0 +1,29 @@
+---
+layout: base.njk
+pagination:
+  data: cms.charts
+  size: 1
+  alias: chart
+permalink: "/charts/{{ chart.id }}/"
+eleventyComputed:
+  title: "{{ chart.title }} — CHIRP Radio Charts"
+  description: "{{ chart.title }} — CHIRP Radio's weekly Top 50."
+---
+
+<nav aria-label="Breadcrumb">
+  <a href="/charts/">← All charts</a>
+</nav>
+
+<article>
+  <h1>{{ chart.title }}</h1>
+
+  {% if chart.charts and chart.charts.root %}
+    <h2>Top 50</h2>
+    <div class="article-body">{{ chart.charts | lexicalHtml | safe }}</div>
+  {% endif %}
+
+  {% if chart.adds and chart.adds.root %}
+    <h2 style="margin-top: 40px;">New adds</h2>
+    <div class="article-body">{{ chart.adds | lexicalHtml | safe }}</div>
+  {% endif %}
+</article>

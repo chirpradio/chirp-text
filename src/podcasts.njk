@@ -1,0 +1,22 @@
+---
+layout: base.njk
+title: Podcasts — CHIRP Radio
+description: CHIRP Radio podcasts and on-demand episodes.
+permalink: /podcasts/
+---
+
+<h1>Podcasts</h1>
+<p>On-demand audio from CHIRP.</p>
+
+<ul class="articles-list">
+{% for podcast in cms.podcasts %}
+  <li>
+    <h3><a href="/podcasts/{{ podcast.slug }}/">{{ podcast.title }}</a></h3>
+    <div class="meta">
+      {{ podcast.publishedDate | chicagoDate }}
+      {% if podcast.host and podcast.host.name %} · {{ podcast.host.name }}{% endif %}
+    </div>
+    {% if podcast.excerpt %}<div class="excerpt">{{ podcast.excerpt }}</div>{% endif %}
+  </li>
+{% endfor %}
+</ul>

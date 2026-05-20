@@ -1,0 +1,45 @@
+---
+layout: base.njk
+pagination:
+  data: cms.events
+  size: 1
+  alias: event
+permalink: "/events/{{ event.slug }}/"
+eleventyComputed:
+  title: "{{ event.title }} — CHIRP Radio Events"
+  description: "{{ event.excerpt or event.title }}"
+---
+
+<nav aria-label="Breadcrumb">
+  <a href="/events/">← All events</a>
+</nav>
+
+<article>
+  <h1>{{ event.title }}</h1>
+  <div class="dj-meta">
+    {{ event.date | chicagoDateLong }}
+    {% if event.venue and event.venue.name %} · {{ event.venue.name }}{% endif %}
+    {% if event.venue and event.venue.city %}, {{ event.venue.city }}{% if event.venue.state %}, {{ event.venue.state }}{% endif %}{% endif %}
+    {% if event.category and event.category.name %} · {{ event.category.name }}{% endif %}
+  </div>
+
+  {% if event.venue %}
+  <h2>Venue</h2>
+  <p>
+    <strong>{{ event.venue.name }}</strong><br>
+    {% if event.venue.address %}{{ event.venue.address }}<br>{% endif %}
+    {% if event.venue.city %}{{ event.venue.city }}{% if event.venue.state %}, {{ event.venue.state }}{% endif %}{% if event.venue.zip %} {{ event.venue.zip }}{% endif %}<br>{% endif %}
+    {% if event.venue.phone %}Phone: <a href="tel:{{ event.venue.phone }}">{{ event.venue.phone }}</a><br>{% endif %}
+    {% if event.venue.website %}<a href="{{ event.venue.website }}" target="_blank" rel="noopener">{{ event.venue.website }} ↗</a>{% endif %}
+  </p>
+  {% endif %}
+
+  {% if event.excerpt %}
+  <p class="dj-meta"><em>{{ event.excerpt }}</em></p>
+  {% endif %}
+
+  {% if event.content and event.content.root %}
+  <h2>About this event</h2>
+  <div class="article-body">{{ event.content | lexicalHtml | safe }}</div>
+  {% endif %}
+</article>

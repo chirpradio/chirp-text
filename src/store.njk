@@ -1,0 +1,74 @@
+---
+layout: base.njk
+title: Store — CHIRP Radio
+description: CHIRP Radio merch — T-shirts, hats, mugs, vinyl, and more.
+permalink: /store/
+---
+
+<h1>Store</h1>
+<p>
+  CHIRP merch — T-shirts, hats, mugs, vinyl, and more. All proceeds support
+  the station.
+</p>
+
+<p>
+  Online checkout requires JavaScript. To order any item below, please
+  <a href="/contact/">contact CHIRP</a> by email or phone — a volunteer will help you
+  through it.
+</p>
+
+{% if cms.products.length %}
+<h2 style="margin-top: 32px;">Current items</h2>
+<ul class="articles-list">
+  {% for product in cms.products %}
+  <li>
+    <h3 style="margin: 0 0 4px;">{{ product.title }}</h3>
+    <div class="meta">
+      {% if product.priceInUSD %}
+        ${{ (product.priceInUSD / 100) | round(2) }}
+      {% endif %}
+      {% if product.variants and product.variants.length %}
+        · {{ product.variants.length }} variant{% if product.variants.length != 1 %}s{% endif %}
+      {% endif %}
+      {% if product.category and product.category.name %}
+        · {{ product.category.name }}
+      {% endif %}
+    </div>
+    {% if product.description and product.description.root %}
+      <div class="excerpt">{{ product.description | lexicalHtml | safe }}</div>
+    {% endif %}
+    {% if product.variants and product.variants.length %}
+      {% set anyInStock = false %}
+      {% set allOutOfStock = true %}
+      {% for v in product.variants %}
+        {% if v.inventory and v.inventory > 0 %}
+          {% set anyInStock = true %}
+          {% set allOutOfStock = false %}
+        {% endif %}
+      {% endfor %}
+
+      <details style="margin-top: 8px;">
+        <summary style="cursor: pointer; font-size: 0.875rem; color: var(--muted);">
+          Sizes / variants
+          {% if allOutOfStock %} (all sold out){% endif %}
+        </summary>
+        <ul style="margin: 8px 0 0; font-size: 0.875rem; color: var(--muted);">
+          {% for v in product.variants %}
+          <li>
+            <strong>{{ v.label }}</strong>{% if v.priceInUSD %} — ${{ (v.priceInUSD / 100) | round(2) }}{% endif %}{% if v.inventory != null %} — {% if v.inventory > 0 %}in stock{% else %}sold out{% endif %}{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No items in stock right now.</p>
+{% endif %}
+
+<p style="margin-top: 32px;">
+  Or <a href="{{ cms.donateUrl }}" target="_blank" rel="noopener">donate directly to CHIRP ↗</a>
+  if you'd rather support the station that way.
+</p>

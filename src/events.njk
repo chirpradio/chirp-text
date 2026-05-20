@@ -1,0 +1,27 @@
+---
+layout: base.njk
+title: Events — CHIRP Radio
+description: Upcoming CHIRP Radio events, DJ nights, fundraisers, and benefits.
+permalink: /events/
+---
+
+<h1>Events</h1>
+<p>Where to catch CHIRP in person.</p>
+
+{% if cms.events.length %}
+<ul class="articles-list">
+{% for event in cms.events %}
+  <li>
+    <h3><a href="/events/{{ event.slug }}/">{{ event.title }}</a></h3>
+    <div class="meta">
+      {{ event.date | chicagoDateLong }}
+      {% if event.venue and event.venue.name %} · {{ event.venue.name }}{% endif %}
+      {% if event.venue and event.venue.city %}, {{ event.venue.city }}{% if event.venue.state %}, {{ event.venue.state }}{% endif %}{% endif %}
+    </div>
+    {% if event.excerpt %}<div class="excerpt">{{ event.excerpt }}</div>{% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No upcoming events right now — check back soon.</p>
+{% endif %}

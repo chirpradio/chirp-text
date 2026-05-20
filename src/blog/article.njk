@@ -1,0 +1,33 @@
+---
+layout: base.njk
+pagination:
+  data: cms.articles
+  size: 1
+  alias: article
+permalink: "/blog/{{ article.slug }}/"
+eleventyComputed:
+  title: "{{ article.title }} — CHIRP Radio Blog"
+  description: "{{ article.excerpt or article.title }}"
+---
+
+<nav aria-label="Breadcrumb">
+  <a href="/blog/">← All posts</a>
+</nav>
+
+<article>
+  <h1>{{ article.title }}</h1>
+  <div class="dj-meta">
+    {{ article.publishedDate | chicagoDateLong }}
+    {% if article.author and article.author.name %} · by {{ article.author.name }}{% endif %}
+    {% if article.category and article.category.name %} · {{ article.category.name }}{% endif %}
+  </div>
+
+  {% if article.excerpt %}
+  <p class="dj-meta"><em>{{ article.excerpt }}</em></p>
+  {% endif %}
+
+  {% if article.content and article.content.root %}
+  <div class="article-body">{{ article.content | lexicalHtml | safe }}</div>
+  {% endif %}
+
+</article>

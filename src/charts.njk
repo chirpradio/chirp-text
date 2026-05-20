@@ -1,0 +1,40 @@
+---
+layout: base.njk
+title: Charts — CHIRP Radio
+description: CHIRP Radio's weekly Top 50 most-played tracks.
+permalink: /charts/
+---
+
+<h1>Charts</h1>
+<p>CHIRP's weekly Top 50, compiled from on-air plays across all DJs.</p>
+
+{% if cms.latestChart %}
+<article aria-labelledby="latest-chart-title">
+  <h2 id="latest-chart-title" style="margin-top: 24px;">{{ cms.latestChart.title }}</h2>
+  {% if cms.latestChart.charts and cms.latestChart.charts.root %}
+    <div class="article-body">{{ cms.latestChart.charts | lexicalHtml | safe }}</div>
+  {% endif %}
+
+  {% if cms.latestChart.adds and cms.latestChart.adds.root %}
+    <h3 style="margin-top: 32px;">New adds</h3>
+    <div class="article-body">{{ cms.latestChart.adds | lexicalHtml | safe }}</div>
+  {% endif %}
+</article>
+{% else %}
+<p>No chart data available right now.</p>
+{% endif %}
+
+{% if cms.charts.length > 1 %}
+<section aria-labelledby="previous-charts">
+  <h2 id="previous-charts" style="margin-top: 40px;">Previous weeks</h2>
+  <ul class="articles-list">
+    {% for chart in cms.charts %}
+      {% if not loop.first %}
+        <li>
+          <h3><a href="/charts/{{ chart.id }}/">{{ chart.title }}</a></h3>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

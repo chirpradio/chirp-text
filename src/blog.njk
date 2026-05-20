@@ -1,0 +1,23 @@
+---
+layout: base.njk
+title: Blog — CHIRP Radio
+description: Latest posts from CHIRP Radio DJs and contributors.
+permalink: /blog/
+---
+
+<h1>Blog</h1>
+<p>Latest posts from CHIRP DJs and contributors.</p>
+
+<ul class="articles-list">
+{% for article in cms.articles %}
+  <li>
+    <h3><a href="/blog/{{ article.slug }}/">{{ article.title }}</a></h3>
+    <div class="meta">
+      {{ article.publishedDate | chicagoDate }}
+      {% if article.author and article.author.name %} · by {{ article.author.name }}{% endif %}
+      {% if article.category and article.category.name %} · {{ article.category.name }}{% endif %}
+    </div>
+    {% if article.excerpt %}<div class="excerpt">{{ article.excerpt }}</div>{% endif %}
+  </li>
+{% endfor %}
+</ul>

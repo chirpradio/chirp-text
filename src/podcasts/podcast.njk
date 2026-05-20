@@ -1,0 +1,44 @@
+---
+layout: base.njk
+pagination:
+  data: cms.podcasts
+  size: 1
+  alias: podcast
+permalink: "/podcasts/{{ podcast.slug }}/"
+eleventyComputed:
+  title: "{{ podcast.title }} — CHIRP Radio Podcasts"
+  description: "{{ podcast.excerpt or podcast.title }}"
+---
+
+<nav aria-label="Breadcrumb">
+  <a href="/podcasts/">← All podcasts</a>
+</nav>
+
+<article>
+  <h1>{{ podcast.title }}</h1>
+  <div class="dj-meta">
+    {{ podcast.publishedDate | chicagoDateLong }}
+    {% if podcast.host and podcast.host.name %} · hosted by {{ podcast.host.name }}{% endif %}
+    {% if podcast.category and podcast.category.name %} · {{ podcast.category.name }}{% endif %}
+  </div>
+
+  {% if podcast.audioUrl or podcast.audio %}
+  {% set audioSrc = podcast.audioUrl or podcast.audio.url %}
+  {% if audioSrc %}
+  <h2>Listen</h2>
+  <audio controls preload="none" aria-label="{{ podcast.title }}">
+    <source src="{{ audioSrc }}" type="audio/mpeg">
+    Your browser does not support the audio element. <a href="{{ audioSrc }}">Download the episode</a>.
+  </audio>
+  {% endif %}
+  {% endif %}
+
+  {% if podcast.excerpt %}
+  <p class="dj-meta"><em>{{ podcast.excerpt }}</em></p>
+  {% endif %}
+
+  {% if podcast.content and podcast.content.root %}
+  <h2>Episode notes</h2>
+  <div class="article-body">{{ podcast.content | lexicalHtml | safe }}</div>
+  {% endif %}
+</article>

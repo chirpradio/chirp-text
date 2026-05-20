@@ -1,0 +1,38 @@
+---
+layout: base.njk
+title: Schedule — CHIRP Radio
+description: CHIRP Radio DJ schedule, organized by day of the week.
+permalink: /schedule/
+---
+
+<h1>Schedule</h1>
+<p>CHIRP DJs and their weekly time slots, Chicago time. Each day starts at midnight.</p>
+
+{% for day in schedule.days %}
+  {% set slots = schedule.grid[day] %}
+  {% if slots.length %}
+    <h2 style="margin-top: 32px;">{{ day | capitalize }}</h2>
+    <table class="playlist" aria-label="{{ day | capitalize }} schedule">
+      <thead>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">DJ</th>
+          <th scope="col">Show</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for slot in slots %}
+        <tr>
+          <td>{{ slot.startTime | to12Hour }}–{{ slot.endTime | to12Hour }}</td>
+          <td><a href="/djs/{{ slot.djSlug }}/">{{ slot.djName }}</a></td>
+          <td>{{ slot.showName }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endfor %}
+
+<p style="margin-top: 32px; color: var(--muted); font-size: 0.875rem;">
+  Times shown in Chicago / Central time.
+</p>

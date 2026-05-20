@@ -1,0 +1,120 @@
+---
+layout: base.njk
+pagination:
+  data: cms.pages
+  size: 1
+  alias: cmsPage
+permalink: "/{{ cmsPage.slug }}/"
+eleventyComputed:
+  title: "{{ cmsPage.title }} — CHIRP Radio"
+  description: "{{ cmsPage.excerpt or cmsPage.title }}"
+---
+
+<h1>{{ cmsPage.title }}</h1>
+
+{% if cmsPage.excerpt %}
+<p class="dj-meta"><em>{{ cmsPage.excerpt }}</em></p>
+{% endif %}
+
+{# CMS pages use a `layout` array of typed blocks. Each block renders to
+   plain semantic HTML for the text-only mirror. #}
+{% if cmsPage.layout %}
+  {% for block in cmsPage.layout %}
+
+    {% if block.blockType == 'contentCard' %}
+      <section>
+        {% if block.preheader %}
+          <p class="dj-meta" style="text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">{{ block.preheader }}</p>
+        {% endif %}
+        {% if block.title %}
+          {# Clamp CMS-supplied titleTag to h2 minimum. The page itself owns the
+             single <h1>; contentCard titles are subsections regardless of what
+             the CMS author selected. #}
+          {% set tag = block.titleTag if block.titleTag in ['h2','h3','h4','h5','h6'] else 'h2' %}
+          <{{ tag }} style="margin-top: 0;">{{ block.title }}</{{ tag }}>
+        {% endif %}
+        {% if block.content and block.content.root %}
+          <div class="article-body">{{ block.content | lexicalHtml | safe }}</div>
+        {% endif %}
+      </section>
+
+    {% elif block.blockType == 'youtubeEmbed' %}
+      {% if block.url %}
+        <p>
+          <strong>{% if block.title %}{{ block.title }}{% else %}Video{% endif %}:</strong>
+          <a href="{{ block.url }}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+        </p>
+      {% endif %}
+
+    {% elif block.blockType == 'imageRow' %}
+      {% if block.images %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0;">
+          {% for img in block.images %}
+            {% set src = img.image.url or img.imageUrl %}
+            {% set alt = img.alt or img.image.alt or '' %}
+            {% if src %}
+              <img src="{{ src }}" alt="{{ alt }}" style="width: 100%; height: auto; border-radius: 4px; display: block;" loading="lazy">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% elif block.blockType == 'cta' or block.blockType == 'callToAction' %}
+      {% if block.title %}<h3>{{ block.title }}</h3>{% endif %}
+      {% if block.body and block.body.root %}
+        <div class="article-body">{{ block.body | lexicalHtml | safe }}</div>
+      {% endif %}
+      {% if block.link and block.link.url %}
+        <p><a href="{{ block.link.url }}"{% if block.link.newTab %} target="_blank" rel="noopener"{% endif %}>{{ block.link.label or 'Learn more' }}{% if block.link.newTab %} ↗{% endif %}</a></p>
+      {% endif %}
+
+    {% elif block.blockType == 'richText' or block.blockType == 'content' %}
+      {% if block.content and block.content.root %}
+        <div class="article-body">{{ block.content | lexicalHtml | safe }}</div>
+      {% endif %}
+
+    {% elif block.blockType == 'contestCard' %}
+      <article style="background: var(--bg-soft); border-left: 4px solid var(--red); padding: 16px 20px; border-radius: 4px; margin: 16px 0;">
+        <h2 style="margin-top: 0;">{{ block.title }}</h2>
+        {% if block.prizeDescription %}<p class="dj-meta"><strong>Prize:</strong> {{ block.prizeDescription }}</p>{% endif %}
+        {% if block.expiresAt %}
+          <p class="dj-meta"><strong>Enter by:</strong> <time datetime="{{ block.expiresAt }}">{{ block.expiresAt | chicagoDateLong }} at {{ block.expiresAt | chicagoTime }}</time></p>
+        {% endif %}
+        {% if block.description and block.description.root %}
+          <div class="article-body">{{ block.description | lexicalHtml | safe }}</div>
+        {% endif %}
+        {% if block.entryUrl %}
+          <p style="margin-top: 12px;"><a href="{{ block.entryUrl }}" target="_blank" rel="noopener">Enter the contest ↗</a></p>
+        {% endif %}
+      </article>
+
+    {% elif block.blockType == 'leadership' %}
+      <section aria-labelledby="leadership-{{ block.id }}">
+        {% if block.eyebrow %}
+          <p class="dj-meta" style="text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; font-size: 0.8125rem; margin-bottom: 4px;">{{ block.eyebrow }}</p>
+        {% endif %}
+        {% if block.heading %}
+          <h2 id="leadership-{{ block.id }}" style="margin-top: 0;">{{ block.heading }}</h2>
+        {% endif %}
+        {% if block.subheading %}
+          <p>{{ block.subheading }}</p>
+        {% endif %}
+        {% if cms.leadership.length %}
+          <ul class="articles-list" style="margin-top: 16px;">
+          {% for person in cms.leadership %}
+            <li>
+              <h3 style="margin: 0 0 4px;">{{ person.firstName }} {{ person.lastName }}</h3>
+              {% if person.title %}<div class="meta">{{ person.title }}</div>{% endif %}
+              {% if person.shortBio %}<div class="excerpt">{{ person.shortBio }}</div>{% endif %}
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </section>
+
+    {% else %}
+      {# Unknown block type — render nothing rather than a placeholder. #}
+    {% endif %}
+
+  {% endfor %}
+{% endif %}
